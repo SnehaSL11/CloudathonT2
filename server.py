@@ -9,22 +9,28 @@ import json
 # AWS Secrets Manager client
 client = boto3.client('secretsmanager', region_name="us-east-1")  # Adjust region if necessary
 
-# Fetch the database credentials from AWS Secrets Manager
-def get_db_credentials(secret_name):
+# Fetch the password from AWS Secrets Manager
+def get_db_password(secret_name):
     try:
         secret = client.get_secret_value(SecretId=secret_name)
         secret_dict = json.loads(secret['SecretString'])
-        return secret_dict
+        return secret_dict['password']
     except Exception as e:
         print("Error fetching secret: ", e)
         raise
 
-# Fetch credentials
-secret_name = "rds!cluster-42875db6-058a-44f9-9904-4d1a55a008ed"  # Your Secret name
-db_credentials = get_db_credentials(secret_name)
+# Fetch password from Secrets Manager
+secret_name = "rds-postgres-credentials"  # Replace with your actual secret name
+db_password = get_db_password(secret_name)
 
-# Construct the database URL from secrets
-DATABASE_URL = f"postgresql+psycopg2://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['host']}:{db_credentials['port']}/{db_credentials['dbname']}"
+# Static database URL components
+username = "postgres"  # Your PostgreSQL username
+host = "database-1.cluster-ckx6wm6m08z0.us-east-1.rds.amazonaws.com"  # Your RDS PostgreSQL endpoint
+port = "5432"  # Default PostgreSQL port
+dbname = "mydb"  # Your database name
+
+# Construct the DATABASE_URL with the fetched password
+DATABASE_URL = f"postgresql+psycopg2://{username}:{db_password}@{host}:{port}/{dbname}"
 
 # FastAPI instance
 app = FastAPI()
@@ -34,7 +40,7 @@ Base = declarative_base()
 
 # Define the Users table
 class User(Base):
-    __tablename__ = "users"
+    _tablename_ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String)
@@ -43,7 +49,7 @@ class User(Base):
 
 # Define the Products table
 class Product(Base):
-    __tablename__ = "products"
+    _tablename_ = "products"
     
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String)
