@@ -20,7 +20,7 @@ def get_db_password(secret_name):
         raise
 
 # Fetch password from Secrets Manager
-secret_name = "rds-postgres-credentials"  # Replace with your actual secret name
+secret_name = "rds!cluster-42875db6-058a-44f9-9904-4d1a55a008ed"  # Replace with your actual secret name
 db_password = get_db_password(secret_name)
 
 # Static database URL components
