@@ -40,7 +40,7 @@ Base = declarative_base()
 
 # Define the Users table
 class User(Base):
-    _tablename_ = "users"
+    __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String)
@@ -49,7 +49,7 @@ class User(Base):
 
 # Define the Products table
 class Product(Base):
-    _tablename_ = "products"
+    __tablename__ = "products"
     
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String)
