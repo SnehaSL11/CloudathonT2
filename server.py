@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 import json
+from sqlalchemy.orm import Session
 
 # AWS Secrets Manager client
 client = boto3.client('secretsmanager', region_name="us-east-1")  # Adjust region if necessary
