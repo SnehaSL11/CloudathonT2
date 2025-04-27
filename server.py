@@ -25,9 +25,9 @@ db_password = get_db_password(secret_name)
 
 # Static database URL components
 username = "postgres"  # Your PostgreSQL username
-host = "database-1.cluster-ckx6wm6m08z0.us-east-1.rds.amazonaws.com"  # Your RDS PostgreSQL endpoint
+host = "database-1.cluster-ckx6wm6m08z0.us-east-1.rds.amazonaws.com"  # Your RDS PostgreSQL cluster endpoint
 port = "5432"  # Default PostgreSQL port
-dbname = "mydb"  # Your database name
+dbname = "postgres"  # Correct default database name
 
 # Construct the DATABASE_URL with the fetched password
 DATABASE_URL = f"postgresql+psycopg2://{username}:{db_password}@{host}:{port}/{dbname}"
@@ -39,8 +39,14 @@ app = FastAPI()
 Base = declarative_base()
 
 # Define the Users table
+from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+# Define the Users table
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "users"  # double underscores __tablename__
     
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String)
@@ -49,12 +55,11 @@ class User(Base):
 
 # Define the Products table
 class Product(Base):
-    __tablename__ = "products"
+    __tablename__ = "products"  # double underscores __tablename__
     
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String)
     price = Column(Float)
-
 # SQLAlchemy session setup
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
